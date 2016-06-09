@@ -1,0 +1,31 @@
+# IntelliJ IDEA internals:
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Eclipse internals:
+.settings/
+.project
+.classpath
+.metadata
+
+# Maven internals:
+target/
+
+# NPM internals:
+node/
+node_modules/
+etc/
+build/
+npm-debug.log
+
+# Docker internals:
+docker/
+
+# Sonar internals:
+.sonar/
+sonar-project.properties
+
+# Coverage internals:
+coverage/
