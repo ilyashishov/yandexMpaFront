@@ -12,15 +12,20 @@
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^3.3.6",
+    "events": "^1.1.0",
     "express": "^4.13.4",
     "express-http-proxy": "^0.7.0",
     "extract-text-webpack-plugin": "^1.0.1",
+    "flux": "^2.1.1",
+    "jquery": "^3.0.0",
+    "keymirror": "^0.1.1",
     "lodash": "^4.13.1",
     "react": "^15.1.0",
     "react-bootstrap-4": "^0.29.1",
     "react-dom": "^15.1.0",
     "react-input-mask": "^0.6.7",
     "react-router": "^2.4.1",
+    "superagent": "^2.0.0",
     "yandex-map-react": "^1.0.0-beta.7"
   },
   "devDependencies": {

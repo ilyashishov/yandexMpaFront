@@ -77,9 +77,10 @@ gulp.task('start', ['watch', 'build' ], function() {
     var app = express();
     app.use(['/public', '/img'], express.static(dest.index));
     app.use('/', express.static(dest.index));
-    app.use('/api', proxy('localhost:9999', {
+    app.use('/api', proxy('127.0.0.1:80', {
         forwardPath: function(req, res) {
             return require('url').parse(req.url).path;
+            console.log(req);
         }
     }));
     app.use('/*', function (req, res, next) {

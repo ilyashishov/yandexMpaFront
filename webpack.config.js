@@ -14,6 +14,7 @@ var config = {
     resolve: {
         extensions: ['', '.webpack.js', '.js', '.jsx', 'ts', 'tsx']
     },
+    devtool: 'source-map',
     plugins: (DEBUG ? [] : [
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin()
