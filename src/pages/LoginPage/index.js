@@ -6,6 +6,9 @@ import _ from 'lodash';
 import Actions from '../../actions/Actions';
 import AuthStore from '../../store/AuthStore';
 var ActionTypes = require("../../constants/ActionTypes");
+import moment from 'moment';
+import DatePicker from 'react-datepicker';
+require('react-datepicker/dist/react-datepicker.css');
 
 class LoginPage extends React.Component {
     constructor(props) {
@@ -13,23 +16,28 @@ class LoginPage extends React.Component {
         this.state = {
             phoneNumber: '',
             code: '',
-            dateOfBirth: '',
+            dateOfBirth: moment(),
             firstName: '',
             lastName: '',
             phoneValid: false,
             step: 1
         }
     }
-
+    handleChangeDate(date){
+        this.setState({
+            dateOfBirth: moment(date).format('DD.MM.YYYY')
+        })
+    }
     handleChange(e) {
         const dataUser = {};
+        console.log(e);
         dataUser[e.target.name] = e.target.value;
         this.setState(_.merge(this.state, dataUser));
     }
 
     handleSubmit(e) {
         var self = this;
-        e.preventDefault();
+        // e.preventDefault();
         if (this.state.phoneNumber != '' && this.state.step == 1) {
             Actions.send(ActionTypes.LOGIN , {phoneNumber: this.state.phoneNumber}, function (res) {
                 if (res.ok) {
@@ -67,8 +75,9 @@ class LoginPage extends React.Component {
                 }
             });
         }
+        e.preventDefault();
     }
-    
+
     render() {
         return <div className="col-md-3 col-sm-8" style={{marginTop: 100, margin: '100px auto', float: 'none'}}>
             {
@@ -83,7 +92,7 @@ class LoginPage extends React.Component {
                                           mask="+7 (999) 999-99-99" maskChar=" "/>
                         </div>
                         <div className="form-group">
-                            <button type="submit" className="btn btn-primary col-md-12 col-sm-12 ">Sign in</button>
+                            <button type="submit" className="btn btn-primary col-md-12 col-sm-12 col-xs-12">Sign in</button>
                         </div>
                     </form>
                 </div>
@@ -119,8 +128,12 @@ class LoginPage extends React.Component {
                         </div>
                         <div className="form-group">
                             <label htmlFor="" className="control-label">Date of Birth</label>
-                            <input onChange={this.handleChange.bind(this)} name="dateOfBirth"
-                                   value={this.state.dateOfBirth} className="form-control"/>
+                            <DatePicker
+                                selected={moment(this.state.dateOfBirth, 'DD.MM.YYYY')}
+                                onChange={this.handleChangeDate.bind(this)}
+                                dateFormat="DD.MM.YYYY"
+                                className="form-control"
+                                name="dateOfBirth"/>
                         </div>
                         <div className="form-group">
                             <label htmlFor="" className="control-label">Load Avatar</label>

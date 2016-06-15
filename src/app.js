@@ -6,6 +6,7 @@ import Header from './components/Header';
 import {Router, Route, Redirect, Link, browserHistory} from 'react-router';
 import app from './components';
 import Chat from './pages/ChatPage'
+import ChatListPage from './pages/ChatListPage'
 import MainPage from './pages/MainPage';
 window.$ = window.jQuery = require('jquery');
 import AuthStore from './store/AuthStore';
@@ -48,7 +49,8 @@ class App extends React.Component {
 				<Route path="/" component={app} onEnter={this.requireAuth}>
 					<Route path="map" component={MainPage}/>
 					<Route path="test" component={Header}/>
-					<Route path="chat" component={Chat} />
+					<Route path="chat/:id" component={Chat} />
+					<Route path="chats" component={ChatListPage} />
 				</Route>
 				<Route path="*" component={NotFoundPage}/>
 			</Router>;

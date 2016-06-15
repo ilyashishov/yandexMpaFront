@@ -1,14 +1,18 @@
 require('./Chat.less');
+require('../../less/scrollBar.css');
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import request from '../../utils/request'
 import _ from 'lodash';
+require('../../scripts/jquery.scrollbar.min.js');
 
 export default class Chat extends React.Component{
     constructor(props){
         super(props);
         this.state ={
-            messages: []
+            messages: [],
+            messagesHeight: 0
         }
     }
     componentDidUpdate(){
@@ -16,7 +20,9 @@ export default class Chat extends React.Component{
 
     }
     componentDidMount(){
-
+        this.setState({
+            messagesHeight: $(window).height() - 60 -130 - 30,
+        })
         var self = this;
         request.post('/getMessages')
             .success(function (res) {
@@ -56,7 +62,10 @@ export default class Chat extends React.Component{
         socket.onerror = function(error) {
             console.error(error.message);
         };
+
+            $('.scrollbar-macosx').scrollbar();
     }
+
     handleClick(e){
         var self = this;
         e.preventDefault();
@@ -78,7 +87,7 @@ export default class Chat extends React.Component{
     }
     render(){
         return <div className="Chat-component">
-            <div className="messages">
+            <div className="messages scrollbar-macosx">
                 {this.state.messages.map(function (i,index) {
                     if(i.id == localStorage.token){
                         return (<p key={index} className="from">{i.text}</p>)
@@ -89,7 +98,7 @@ export default class Chat extends React.Component{
             </div>
             <div className="message_write">
                 <a href="#" onClick={this.handleClick.bind(this)} className="btn btn-primary message-send">Enter</a>
-                <div className="form-group" style={{margin: 0}}>
+                <div className="form-group" style={{margin: 0, padding: 10}}>
                     <textarea ref="message_form"textarea className="form-control" name="" id="" cols="30" rows="10"></textarea>
                 </div>
             </div>
