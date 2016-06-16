@@ -37,7 +37,6 @@ class ChatListPage extends React.Component{
             return null;
         }
 
-        console.log(this.state);
         return <div>
             <h1 style={{textAlign: 'center'}}>Masseges</h1>
             <div style={{padding: 10}}>
@@ -45,7 +44,7 @@ class ChatListPage extends React.Component{
                     this.state.chatsList.chats.map((i, index) => {
                         return <div onClick={this.handleClick.bind(this, i.id)} key={index} style={{borderBottom: '1px solid #E4E4E4', cursor: 'pointer'}}>
                             <div className="avatar" style={{width: 40, height: 40, float: 'left', margin: 10}}>
-                                <img style={{width: 40, height: 40, borderRadius: '50%'}} src="./img/avatar.png" alt=""/>
+                                <img style={{width: 40, height: 40, borderRadius: '50%'}} src={i.avatar} alt=""/>
                             </div>
                             <div className="pull-left">
                                 <h4 style={{marginBottom: 5}}>{i.name}</h4>

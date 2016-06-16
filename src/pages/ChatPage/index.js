@@ -1,39 +1,43 @@
 require('./Chat.less');
 require('../../less/scrollBar.css');
+require('../../scripts/jquery.scrollbar.min.js');
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import request from '../../utils/request'
-import _ from 'lodash';
-require('../../scripts/jquery.scrollbar.min.js');
+import moment from 'moment';
+
+import ChatsStore from '../../store/ChatsStore';
+import AuthStore from '../../store/AuthStore';
+
+import Actions from '../../actions/Actions';
+var ActionTypes = require("../../constants/ActionTypes");
+
+
+
+
+function getState() {
+    return  ChatsStore.getMessages();
+}
+
 
 export default class Chat extends React.Component{
     constructor(props){
         super(props);
         this.state ={
-            messages: [],
-            messagesHeight: 0
+            messagesHeight: 0,
+            userInfo: AuthStore.userInfo(),
+            messages: getState()
         }
     }
     componentDidUpdate(){
         $('.messages').scrollTop($('.messages').prop('scrollHeight'));
-
     }
     componentDidMount(){
+        Actions.send(ActionTypes.GET_MESSAGES_TO_CHAT, {chat_id: this.props.params.id})
+        ChatsStore.addChangeListener(this._onChange.bind(this));
         this.setState({
             messagesHeight: $(window).height() - 60 -130 - 30,
         })
-        var self = this;
-        request.post('/getMessages')
-            .success(function (res) {
-                self.setState({messages: res})
-            })
-            .error(function () {
-            })
-            .always(function () {
-                // userLoading = false;
-            })
-            .send();
         var self = this;
         var socket = new WebSocket('ws://localhost:8080');
 
@@ -51,8 +55,10 @@ export default class Chat extends React.Component{
         };
 
         socket.onmessage = function(event) {
-            console.info('Получены данные ');
-            var data = JSON.parse(event.data)
+            console.info('Получены данные !');
+            var data = self.state.messages;
+            console.log(data);
+            data.push(JSON.parse(event.data));
             console.log(data);
             self.setState({
                 messages: data
@@ -63,7 +69,15 @@ export default class Chat extends React.Component{
             console.error(error.message);
         };
 
-            $('.scrollbar-macosx').scrollbar();
+        $('.scrollbar-macosx').scrollbar();
+    }
+
+    componentWillUnmount() {
+        ChatsStore.removeChangeListener(this._onChange.bind(this));
+    }
+
+    _onChange() {
+        this.setState(getState());
     }
 
     handleClick(e){
@@ -71,30 +85,29 @@ export default class Chat extends React.Component{
         e.preventDefault();
         var value = ReactDOM.findDOMNode(this.refs.message_form).value;
         if(value){
-            request.get(`/ws?id=${localStorage.token}&mes=${value}`)
-                .success(function (res) {
-                    console.log(res);
-                    ReactDOM.findDOMNode(self.refs.message_form).value = '';
-                })
-                .error(function () {
-                })
-                .always(function () {
-                    // userLoading = false;
-                })
-                .send();
+            Actions.send(ActionTypes.SEND_MESSAGE, {data: {
+                chat_id: this.props.params.id,
+                user_id: this.state.userInfo.data.id,
+                text: value,
+                date: moment().format('DD.MM.YYYY h:mm')
+            }});
+            ReactDOM.findDOMNode(self.refs.message_form).value = '';
         }
         return false;
     }
     render(){
+        if(!this.state.messages){
+            return null;
+        }
         return <div className="Chat-component">
             <div className="messages scrollbar-macosx">
-                {this.state.messages.map(function (i,index) {
-                    if(i.id == localStorage.token){
-                        return (<p key={index} className="from">{i.text}</p>)
-                    }else{
-                        return (<p key={index} className="to">{i.text}</p>)
-                    }
-                })}
+                    {this.state.messages.map((i,index) => {
+                        if(i.user_id == this.state.userInfo.data.id){
+                            return (<p key={index} className="from">{i.text}</p>)
+                        }else{
+                            return (<p key={index} className="to">{i.text}</p>)
+                        }
+                    })}
             </div>
             <div className="message_write">
                 <a href="#" onClick={this.handleClick.bind(this)} className="btn btn-primary message-send">Enter</a>

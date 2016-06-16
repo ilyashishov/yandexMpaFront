@@ -5,7 +5,7 @@ import ActionTypes from '../constants/ActionTypes';
 import _ from 'lodash';
 import Store from './Store';
 
-var chatsList = '';
+var chatsList = '', messagesToChat = '';
 
 function getHatsList() {
     request.post('/chats/list', {hash: localStorage.token})
@@ -16,10 +16,42 @@ function getHatsList() {
         .send();
 }
 
+function getMessagesToChat(id) {
+    request.post('/chat/messages', {chat_id: id})
+        .success(function (res) {
+            messagesToChat = res;
+            ChatsStore.emitChange();
+        })
+        .send();
+}
+
+function sendMessage(data) {
+    console.log(data);
+    request.post('/chat/message/new', {
+            chat_id: data.chat_id,
+            user_id: data.user_id,
+            text: data.text,
+            date: data.date
+        })
+        .success(function (res) {
+
+        })
+        .error(function () {
+        })
+        .always(function () {
+            // userLoading = false;
+        })
+        .send();
+}
+
 
 var ChatsStore = _.extend({}, Store, {
     getChatsList: function () {
         return chatsList;
+    },
+
+    getMessages: function () {
+        return messagesToChat;
     }
 });
 
@@ -28,6 +60,12 @@ AppDispatcher.register(function (payload) {
     switch (action.actionType) {
         case ActionTypes.GET_HCATS_LIST:
             getHatsList();
+            return true;
+        case ActionTypes.GET_MESSAGES_TO_CHAT:
+            getMessagesToChat(action.chat_id);
+            return true;
+        case ActionTypes.SEND_MESSAGE:
+            sendMessage(action.data);
             return true;
         default:
             return true;
