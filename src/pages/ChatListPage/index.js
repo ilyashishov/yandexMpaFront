@@ -15,6 +15,7 @@ class ChatListPage extends React.Component{
         super(props);
         this.state = getState();
     }
+
     componentDidMount() {
         Actions.send(ActionTypes.GET_HCATS_LIST);
         ChatsStore.addChangeListener(this._onChange.bind(this));
@@ -27,11 +28,11 @@ class ChatListPage extends React.Component{
     _onChange() {
         this.setState(getState());
     }
-    
+
     handleClick(id){
         this.context.router.replace('/chat/' + id)
     }
-    
+
     render(){
         if(!this.state.chatsList){
             return null;
@@ -47,10 +48,10 @@ class ChatListPage extends React.Component{
                                 <img style={{width: 40, height: 40, borderRadius: '50%'}} src={i.avatar} alt=""/>
                             </div>
                             <div className="pull-left">
-                                <h4 style={{marginBottom: 5}}>{i.name}</h4>
-                                <p>Hi</p>
+                                <h4 style={{marginBottom: 5}}>{`${i.last_name} ${i.first_name}`}</h4>
+                                <p>{i.last_message}</p>
                             </div>
-                            <h6 className="pull-right" style={{marginRight: 10}}>{moment().format('h:mm')}</h6>
+                            <h6 className="pull-right" style={{marginRight: 10}}>{moment(i.last_change_date).format('HH:mm')}</h6>
                             <div style={{clear: 'both'}}></div>
                         </div>
                     })

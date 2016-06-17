@@ -89,7 +89,7 @@ export default class Chat extends React.Component{
                 chat_id: this.props.params.id,
                 user_id: this.state.userInfo.data.id,
                 text: value,
-                date: moment().format('DD.MM.YYYY h:mm')
+                date: moment().format('DD.MM.YYYY HH:mm')
             }});
             ReactDOM.findDOMNode(self.refs.message_form).value = '';
         }

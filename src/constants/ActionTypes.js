@@ -7,5 +7,6 @@ module.exports = keyMirror({
     GET_CURRENT_USER: null,
     GET_HCATS_LIST: null,
     GET_MESSAGES_TO_CHAT: null,
-    SEND_MESSAGE: null
+    SEND_MESSAGE: null,
+    GET_EVENTS: null
 });

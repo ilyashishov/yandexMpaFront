@@ -36,11 +36,6 @@ function sendMessage(data) {
         .success(function (res) {
 
         })
-        .error(function () {
-        })
-        .always(function () {
-            // userLoading = false;
-        })
         .send();
 }
 

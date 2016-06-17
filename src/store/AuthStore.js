@@ -5,13 +5,22 @@ import ActionTypes from '../constants/ActionTypes';
 import _ from 'lodash';
 import Store from './Store';
 
-var _userInfo = '';
+var _userInfo = '', eventsData = '';
 
 function getCurrentUser(callback) {
     request.post('/current', {hash: localStorage.token})
         .success(function (res) {
             _userInfo = res;
             callback(res);
+            AuthStore.emitChange();
+        })
+        .send();
+}
+
+function getEventsData() {
+    request.get('/events')
+        .success(function (res) {
+            eventsData = res;
             AuthStore.emitChange();
         })
         .send();
@@ -71,6 +80,10 @@ function registration(data, callback) {
 var AuthStore = _.extend({}, Store, {
     userInfo: function () {
        return _userInfo
+    },
+    
+    getEvents: function () {
+        return eventsData; 
     }
 
 
@@ -90,6 +103,9 @@ AppDispatcher.register(function (payload) {
             return true;
         case ActionTypes.GET_CURRENT_USER:
             getCurrentUser(action.callback);
+            return true;
+        case ActionTypes.GET_EVENTS:
+            getEventsData();
             return true;
         default:
             return true;

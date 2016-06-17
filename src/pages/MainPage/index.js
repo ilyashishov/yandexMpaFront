@@ -2,10 +2,9 @@ import React from 'react';
 import {Link} from 'react-router'
 import { Map, Marker, MarkerLayout } from 'yandex-map-react';
 import {Point, MyPoint} from '../../components/Point';
-import _ from 'lodash';
-import ReactDOM from 'react-dom';
+import AuthStore from '../../store/AuthStore';
 
-var Masonry = require('masonry-layout')
+var Masonry = require('masonry-layout');
 
 export default class MainPage extends React.Component {
     constructor(props) {
@@ -19,7 +18,8 @@ export default class MainPage extends React.Component {
             openGalleryImg: '',
             showGallery: false,
             showGalleryWidth: 0,
-            windowWidth: 0
+            windowWidth: 0,
+            eventsData: AuthStore.getEvents()
         }
     }
     componentDidMount(){
@@ -46,23 +46,24 @@ export default class MainPage extends React.Component {
             rightBarShow: true,
             data: data
         })
-        var grid = document.querySelector('.grid');
-        var msnry = new Masonry( grid, {
+        var grid2 = document.querySelector('.grids');
+        var msnry2 = new Masonry( grid2, {
             // options...
-            itemSelector: '.grid-item',
-            columnWidth: '.grid-item',
+            itemSelector: '.grid',
+            columnWidth: '.grid',
             transitionDuration: 10
         });
 
     }
     render() {
+        console.log(this.state.eventsData);
         var data1 = {
             lastName: 'Алина',
             firstName: 'Савченко',
             avatar: './img/avatar.png',
             photos: ['https://pp.vk.me/c630626/v630626524/29506/ebEVGcIWaC4.jpg', 'https://pp.vk.me/c629316/v629316524/3157f/r5frTb2Amvg.jpg'],
             level: 10,
-            id: 1,
+            id: 3,
 
         }
         var data2 = {
@@ -71,7 +72,7 @@ export default class MainPage extends React.Component {
             avatar: './img/avatar2.png',
             photos: ['https://pp.vk.me/c622929/v622929922/41a5e/LWblWA6JqVA.jpg', 'https://pp.vk.me/c625320/v625320922/3b377/J3KFwbW7k9U.jpg' ,'https://pp.vk.me/c620330/v620330922/10fc8/CojM98ueuL0.jpg'],
             level: 13,
-            id: 2,
+            id: 5,
 
         }
         console.log(this.state.windowWidth)
@@ -85,6 +86,15 @@ export default class MainPage extends React.Component {
                         $('.rightBar').removeClass('bounceInRight').addClass('bounceOutRight');
                         setTimeout(() => {this.setState({rightBarShow: false})},1000)
                     }}>
+                    {
+                        this.state.eventsData.map((i, index)=>{
+                            return <Point
+                                key={index}
+                                lat={i.position[0]}
+                                lon={i.position[1]}
+                                avatar={i.img} />
+                        })
+                    }
                     <Point openInfo={this.openInfo.bind(this,data1)} lat={this.state.latitude + 0.001} lon={this.state.longitude - 0.001} avatar={'./img/avatar.png'} />
                     <Point openInfo={this.openInfo.bind(this, data2)} lat={this.state.latitude - 0.0005} lon={this.state.longitude + 0.0003} avatar={'./img/avatar2.png'} />
                     <MyPoint lat={this.state.latitude} lon={this.state.longitude} avatar={'./img/avatar3.jpg'} />
@@ -103,12 +113,12 @@ export default class MainPage extends React.Component {
                             <div className="level-number">{this.state.data.level}</div>
                         </div>
                         <div style={{marginTop: 5}}>
-                            <Link to="/chat/1" style={{margin: 5, marginLeft: 0}}>Message</Link>
+                            <Link to={"/chat/" + this.state.data.id} style={{margin: 5, marginLeft: 0}}>Message</Link>
                             <Link to="/friends/add/1" style={{margin: 5, marginLeft: 10}}>Add to Friends</Link>
                         </div>
                     </div>
                     <div style={{clear: 'both'}}></div>
-                    <div className="photo-gallery grid">
+                    <div className="photo-gallery grids">
                         <h3>Latest photos</h3>
                         <div style={{position: 'relative'}}>
                             {
@@ -119,7 +129,7 @@ export default class MainPage extends React.Component {
                                                 openGalleryImg: i
                                             })
                                         }}
-                                                src={i} alt="" className="grid-item"/>
+                                                src={i} alt="" className="grid"/>
                                 })
                             }
                         </div>
