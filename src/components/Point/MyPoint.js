@@ -17,8 +17,16 @@ export default class MyPoint extends Point {
     render() {
         return <Marker lat={this.props.lat} lon={this.props.lon} onClick={this.handleClick.bind(this)}>
             <MarkerLayout>
-                <div style={{position: 'relative'}}>
-                    <div style={{borderRadius: '50%', overflow: 'hidden', width: 60, height: 60, boxShadow: '0px 0px 5px rgba(0,0,0,.5)'}}>
+                <div style={{position: 'relative', height: 68}}>
+                    <div style={{width: 5, height: 5, background: '#1A237E', position: 'absolute', left: 27.5, bottom: -5}}></div>
+                    <div style={{
+                                    borderRadius: '50%',
+                                    overflow: 'hidden',
+                                    width: 60,
+                                    height: 60,
+                                    boxShadow: '0px 0px 5px rgba(0,0,0,.5)',
+
+                                    }}>
                         <img style={{width: 70, height: 70}} src={this.props.avatar}/>
                     </div>
                     {

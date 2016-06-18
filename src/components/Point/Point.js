@@ -17,7 +17,8 @@ class Point extends React.Component {
     render() {
         return <Marker lat={this.props.lat} lon={this.props.lon} onClick={this.handleClick.bind(this)}>
             <MarkerLayout>
-                <div style={{position: 'relative', zIndex: 10}}>
+                <div style={{position: 'relative', zIndex: 10, height: 95,}}>
+                    <div style={{width: 5,height: 5,position: 'absolute', bottom: -5, left: 37.5, background: '#D50000'}}></div>
                     <div style={{borderRadius: '50%', overflow: 'hidden', width: 80, height: 80}}>
                         <img style={{width: 90, height: 90}} src={this.props.avatar}/>
                     </div>

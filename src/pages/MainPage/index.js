@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router'
 import { Map, Marker, MarkerLayout } from 'yandex-map-react';
-import {Point, MyPoint} from '../../components/Point';
+import {Point, MyPoint , EventPoint} from '../../components/Point';
 import AuthStore from '../../store/AuthStore';
 
 var Masonry = require('masonry-layout');
@@ -19,15 +19,16 @@ export default class MainPage extends React.Component {
             showGallery: false,
             showGalleryWidth: 0,
             windowWidth: 0,
-            eventsData: AuthStore.getEvents()
+            eventsData: AuthStore.getEvents(),
+            eventInfoShow: false
         }
     }
     componentDidMount(){
         var self = this;
         navigator.geolocation.getCurrentPosition(function(position) {
             self.setState({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude
+                latitude: 53.195947,//position.coords.latitude,
+                longitude: 45.010325//position.coords.longitude
             })
         });
         this.setState({
@@ -35,6 +36,16 @@ export default class MainPage extends React.Component {
             mapHeight: $(window).height(),
             windowWidth: $(window).width(),
             showGalleryWidth: $(window).width() - 300
+        });
+        AuthStore.addChangeListener(this._onChange.bind(this));
+    }
+    componentWillUnmount() {
+        AuthStore.removeChangeListener(this._onChange.bind(this));
+    }
+
+    _onChange() {
+        this.setState({
+            eventsData: AuthStore.getEvents()
         });
     }
 
@@ -44,6 +55,7 @@ export default class MainPage extends React.Component {
     openInfo(data){
         this.setState({
             rightBarShow: true,
+            eventInfoShow: false,
             data: data
         })
         var grid2 = document.querySelector('.grids');
@@ -55,8 +67,14 @@ export default class MainPage extends React.Component {
         });
 
     }
+    openEventInfo(data){
+        this.setState({
+            event: data,
+            eventInfoShow: true,
+            rightBarShow: false
+        })
+    }
     render() {
-        console.log(this.state.eventsData);
         var data1 = {
             lastName: 'Алина',
             firstName: 'Савченко',
@@ -75,7 +93,9 @@ export default class MainPage extends React.Component {
             id: 5,
 
         }
-        console.log(this.state.windowWidth)
+        if(!this.state.eventsData){
+            return null;
+        }
         return <div style={{overflow: 'hidden', position: 'relative', width: '100%', height: this.state.rightBarHeight-1}}>
             <div style={{top: 0, position: 'absolute', width: '100vw', height: this.state.mapHeight}}>
                 <Map
@@ -84,11 +104,12 @@ export default class MainPage extends React.Component {
                     center={[this.state.latitude, this.state.longitude]}
                     zoom={17} onClick={() => {
                         $('.rightBar').removeClass('bounceInRight').addClass('bounceOutRight');
-                        setTimeout(() => {this.setState({rightBarShow: false})},1000)
+                        setTimeout(() => {this.setState({rightBarShow: false, eventInfoShow: false})},1000)
                     }}>
                     {
                         this.state.eventsData.map((i, index)=>{
-                            return <Point
+                            return <EventPoint
+                                openEventInfo={this.openEventInfo.bind(this, i)}
                                 key={index}
                                 lat={i.position[0]}
                                 lon={i.position[1]}
@@ -132,6 +153,28 @@ export default class MainPage extends React.Component {
                                                 src={i} alt="" className="grid"/>
                                 })
                             }
+                        </div>
+                    </div>
+                </div>
+            }
+            {
+                this.state.eventInfoShow &&
+                <div className='rightBar animated bounceInRight' style={{ width: this.state.windowWidth < 768 ? this.state.windowWidth  : 300, height: "100%", background: '#fff', position: 'absolute', top: 0, right: 0, zIndex: 100}}>
+                    <div>
+                        <img src={this.state.event.img} alt="" style={{width: '100%', heigth: 'auto'}}/>
+                    </div>
+                    <div style={{clear: 'both'}}></div>
+                    <div style={{padding: 5}}>
+                        <h3>{this.state.event.title}</h3>
+                        <div style={{position: 'relative'}}>
+                            <h5>{this.state.event.desciption}</h5>
+                        </div>
+                        <br/>
+                        <p style={{color: '#666', float: 'left', fontStyle: 'italic'}  }>{this.state.event.dateTime}</p>
+                        <p style={{color: '#666', float: 'right', fontStyle: 'italic'}  }>{this.state.event.address}</p>
+                        <div style={{clear: 'both'}}></div>
+                        <div>
+                                <a href="" className="btn btn-primary col-md-12 text-center" >I'm going!</a>
                         </div>
                     </div>
                 </div>
