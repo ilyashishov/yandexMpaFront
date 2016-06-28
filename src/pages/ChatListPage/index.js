@@ -4,6 +4,9 @@ var ActionTypes = require("../../constants/ActionTypes");
 import ChatsStore from '../../store/ChatsStore';
 import moment from 'moment';
 
+require('../../less/perfect-scrollbar.min.css');
+require('perfect-scrollbar/jquery');
+
 function getState() {
     return {
         chatsList: ChatsStore.getChatsList()
@@ -17,6 +20,9 @@ class ChatListPage extends React.Component{
     }
 
     componentDidMount() {
+        setTimeout(function () {
+            $('#container').perfectScrollbar();
+        },100)
         Actions.send(ActionTypes.GET_HCATS_LIST);
         ChatsStore.addChangeListener(this._onChange.bind(this));
     }
@@ -30,7 +36,7 @@ class ChatListPage extends React.Component{
     }
 
     handleClick(id){
-        this.context.router.replace('/chat/' + id)
+        this.context.router.replace('/chat/' + id);
     }
 
     render(){
@@ -38,7 +44,7 @@ class ChatListPage extends React.Component{
             return null;
         }
 
-        return <div>
+        return <div id="#container" style={{height: '100%'}}>
             <h1 style={{textAlign: 'center'}}>Masseges</h1>
             <div style={{padding: 10}}>
                 {

@@ -27,8 +27,8 @@ export default class MainPage extends React.Component {
         var self = this;
         navigator.geolocation.getCurrentPosition(function(position) {
             self.setState({
-                latitude: 53.195947,//position.coords.latitude,
-                longitude: 45.010325//position.coords.longitude
+                latitude: position.coords.latitude, // 53.195947,
+                longitude: position.coords.longitude //45.010325
             })
         });
         this.setState({
@@ -81,7 +81,7 @@ export default class MainPage extends React.Component {
             avatar: './img/avatar.png',
             photos: ['https://pp.vk.me/c630626/v630626524/29506/ebEVGcIWaC4.jpg', 'https://pp.vk.me/c629316/v629316524/3157f/r5frTb2Amvg.jpg'],
             level: 10,
-            id: 3,
+            id: 6,
 
         }
         var data2 = {
@@ -90,7 +90,7 @@ export default class MainPage extends React.Component {
             avatar: './img/avatar2.png',
             photos: ['https://pp.vk.me/c622929/v622929922/41a5e/LWblWA6JqVA.jpg', 'https://pp.vk.me/c625320/v625320922/3b377/J3KFwbW7k9U.jpg' ,'https://pp.vk.me/c620330/v620330922/10fc8/CojM98ueuL0.jpg'],
             level: 13,
-            id: 5,
+            id: 7,
 
         }
         if(!this.state.eventsData){

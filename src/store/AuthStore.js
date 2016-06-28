@@ -5,7 +5,17 @@ import ActionTypes from '../constants/ActionTypes';
 import _ from 'lodash';
 import Store from './Store';
 
-var _userInfo = '', eventsData = '';
+var _userInfo = '', eventsData = '', myAddress = '';
+
+function getMyAddress(latitude,longitude) {
+    request.get(`/getAddress?latitude=${latitude}&longitude=${longitude}`)
+        .success(function (res) {
+            myAddress = res;
+            console.log()
+            AuthStore.emitChange();
+        })
+        .send();
+}
 
 function getCurrentUser(callback) {
     request.post('/current', {hash: localStorage.token})
@@ -84,8 +94,11 @@ var AuthStore = _.extend({}, Store, {
     
     getEvents: function () {
         return eventsData; 
-    }
+    },
 
+    getAddress: function () {
+        return myAddress;
+    }
 
 });
 
@@ -106,6 +119,9 @@ AppDispatcher.register(function (payload) {
             return true;
         case ActionTypes.GET_EVENTS:
             getEventsData();
+            return true;
+        case ActionTypes.GET_ADDRESS:
+            getMyAddress(action.latitude, action.longitude);
             return true;
         default:
             return true;

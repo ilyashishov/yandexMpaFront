@@ -8,5 +8,6 @@ module.exports = keyMirror({
     GET_HCATS_LIST: null,
     GET_MESSAGES_TO_CHAT: null,
     SEND_MESSAGE: null,
-    GET_EVENTS: null
+    GET_EVENTS: null,
+    GET_ADDRESS: null
 });

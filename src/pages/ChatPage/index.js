@@ -1,6 +1,6 @@
 require('./Chat.less');
-require('../../less/scrollBar.css');
-require('../../scripts/jquery.scrollbar.min.js');
+require('../../less/perfect-scrollbar.min.css');
+require('perfect-scrollbar/jquery');
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -30,9 +30,10 @@ export default class Chat extends React.Component{
         }
     }
     componentDidUpdate(){
-        $('.messages').scrollTop($('.messages').prop('scrollHeight'));
+        $('#container').scrollTop($('#container').prop('scrollHeight'));
     }
     componentDidMount(){
+        console.log(234324234);
         Actions.send(ActionTypes.GET_MESSAGES_TO_CHAT, {chat_id: this.props.params.id})
         ChatsStore.addChangeListener(this._onChange.bind(this));
         this.setState({
@@ -57,9 +58,7 @@ export default class Chat extends React.Component{
         socket.onmessage = function(event) {
             console.info('Получены данные !');
             var data = self.state.messages;
-            console.log(data);
             data.push(JSON.parse(event.data));
-            console.log(data);
             self.setState({
                 messages: data
             });
@@ -69,7 +68,9 @@ export default class Chat extends React.Component{
             console.error(error.message);
         };
 
-        $('.scrollbar-macosx').scrollbar();
+        setTimeout(function () {
+            $('#container').perfectScrollbar();
+        },100)
     }
 
     componentWillUnmount() {
@@ -100,7 +101,7 @@ export default class Chat extends React.Component{
             return null;
         }
         return <div className="Chat-component">
-            <div className="messages scrollbar-macosx">
+            <div className="scrollbar-macosx" id="container" style={{position: 'relative', height: '55vh'}}>
                     {this.state.messages.map((i,index) => {
                         if(i.user_id == this.state.userInfo.data.id){
                             return (<p key={index} className="from">{i.text}</p>)
@@ -108,6 +109,7 @@ export default class Chat extends React.Component{
                             return (<p key={index} className="to">{i.text}</p>)
                         }
                     })}
+                <div style={{clear: 'both'}}></div>
             </div>
             <div className="message_write">
                 <a href="#" onClick={this.handleClick.bind(this)} className="btn btn-primary message-send">Enter</a>

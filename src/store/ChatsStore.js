@@ -5,7 +5,7 @@ import ActionTypes from '../constants/ActionTypes';
 import _ from 'lodash';
 import Store from './Store';
 
-var chatsList = '', messagesToChat = '';
+var chatsList = '', messagesToChat = [];
 
 function getHatsList() {
     request.post('/chats/list', {hash: localStorage.token})

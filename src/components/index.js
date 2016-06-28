@@ -3,6 +3,11 @@ import MainPage from '../pages/MainPage';
 import AuthStore from '../store/AuthStore';
 import {Link} from 'react-router';
 var Masonry = require('masonry-layout');
+require('../less/scrollBar.css');
+require('../scripts/jquery.scrollbar.min.js');
+import { Map, Marker, MarkerLayout } from 'yandex-map-react';
+import {Point, MyPoint , EventPoint} from './Point';
+
 
 import Actions from '../actions/Actions';
 var ActionTypes = require("../constants/ActionTypes");
@@ -11,7 +16,8 @@ function getState() {
     return {
         user: AuthStore.userInfo(),
         leftBarShow: false,
-        windowHeight: 0
+        windowHeight: 0,
+        windowWidth: 0
     };
 }
 
@@ -30,7 +36,8 @@ export default class app extends React.Component {
         setTimeout(() => {
             this.setState({
                 leftBarShow: !this.state.leftBarShow,
-                windowHeight: $(window).height()
+                windowHeight: $(window).height(),
+                windowWidth: $(window).width()
             }, () => {
                 var grid = document.querySelector('.grid');
                 var msnry = new Masonry( grid, {
@@ -41,10 +48,19 @@ export default class app extends React.Component {
                 });
             })
         },timeOut)
-
+        setTimeout(function () {
+            $('#container').perfectScrollbar();
+        },100)
     }
     
     componentDidMount() {
+        var self = this;
+        navigator.geolocation.getCurrentPosition(function(position) {
+            self.setState({
+                latitude: position.coords.latitude, // 53.195947,
+                longitude: position.coords.longitude //45.010325
+            })
+        });
         Actions.send(ActionTypes.GET_EVENTS);
         AuthStore.addChangeListener(this._onChange.bind(this));
     }
@@ -72,7 +88,7 @@ export default class app extends React.Component {
                 </div>
             </header>
             {
-                this.state.leftBarShow && <div className='leftBar animated bounceInLeft' style={{ width: this.state.windowWidth < 768 ? this.state.windowWidth  : 300, height: this.state.windowHeight - 60, background: '#fff', position: 'absolute', top: 60, left: 0, zIndex: 100}}>
+                this.state.leftBarShow && <div id="container" className='leftBar animated bounceInLeft' style={{ width: this.state.windowWidth < 768 ? this.state.windowWidth  : 300, height: this.state.windowHeight - 60, background: '#fff', position: 'absolute', top: 60, left: 0, zIndex: 100}}>
                     <div>
                         <div className="myAvatar" style={{width: 80, height: 80, float: 'left', margin: 10, borderRadius: '50%', overflow: 'hidden'}}>
                             <img style={{width: 80, height: 80}} src={this.state.user.data.avatar} alt=""/>
@@ -84,6 +100,12 @@ export default class app extends React.Component {
                             {`${this.state.user.data.last_name} ${this.state.user.data.first_name}`}
                             <a href="" style={{fontSize: 14, marginLeft: 10}}><span className="glyphicon glyphicon-pencil"></span></a>
                         </h4>
+                        <div>
+                            <h5 style={{display: 'inline-block', marginLeft: 10}} className="level">Level</h5>
+                            <div className="level-number" style={{display: 'inline-block'}}>7</div>
+                            <p style={{display: 'inline-block', marginLeft: 10}}>791 xp</p>
+                            <p style={{display: 'inline-block',  marginLeft: 10}}>9 XP to reach Level 8</p>
+                        </div>
                         <div style={{clear: 'both'}}></div>
                     </div>
                     <div>
@@ -100,9 +122,28 @@ export default class app extends React.Component {
                                 }
                             </div>
                         </div>
+                        <div className="map" style={{marginLeft: 10, marginTop: 140}}>
+                            <h3>Where I've been</h3>
+                            <Map
+                                width={290}
+                                height={300}
+                                onAPIAvailable={function () { console.log('API loaded'); }}
+                                center={[this.state.latitude, this.state.longitude]}
+                                zoom={17} >
+                                <MyPoint lat={this.state.latitude} lon={this.state.longitude} avatar={'./img/avatar3.jpg'} />
+                            </Map>
+                        </div>
+                        <div style={{padding: 5}} className="achievements">
+                            <h3>My achievements</h3>
+                            <img alt="" src="./img/img1.png"/>
+                            <img alt="" src="./img/img2.png"/>
+                            <img alt="" src="./img/img3.png"/>
+                            <img alt="" src="./img/img4.png"/>
+                            <img alt="" src="./img/img5.png"/>
+                        </div>
                     </div>
                 </div>
-            }
+            }   
             {this.props.children}
         </div>
     }
