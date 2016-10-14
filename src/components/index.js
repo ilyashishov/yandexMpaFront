@@ -94,7 +94,7 @@ export default class app extends React.Component {
                             </div>
                             <div style={{position: 'relative'}}>
                                 {
-                                    this.state.user.data.photos.split(';').map((i, index) => {
+                                    this.state.user.data.photos && this.state.user.data.photos.split(';').map((i, index) => {
                                         return <img key={index} src={i} alt="" className="grid-item"/>
                                     })
                                 }
