@@ -3,7 +3,7 @@ require('./less/style.less');
 import React from 'react';
 import ReactDom from 'react-dom';
 import Header from './components/Header';
-import {Router, Route, Redirect, Link, browserHistory} from 'react-router';
+import {Router, Route, Redirect, Link, browserHistory, IndexRedirect} from 'react-router';
 import app from './components';
 import Chat from './pages/ChatPage'
 import ChatListPage from './pages/ChatListPage'
@@ -47,6 +47,7 @@ class App extends React.Component {
         return <Router history={browserHistory}>
 				<Route path="login" component={LoginPage} onEnter={this.requireNotAuth}/>
 				<Route path="/" component={app} onEnter={this.requireAuth}>
+					<IndexRedirect to="/map"/>
 					<Route path="map" component={MainPage}/>
 					<Route path="test" component={Header}/>
 					<Route path="chat/:id" component={Chat} />
