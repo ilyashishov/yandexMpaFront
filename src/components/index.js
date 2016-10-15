@@ -1,11 +1,13 @@
 import React from 'react';
 import MainPage from '../pages/MainPage';
 import AuthStore from '../store/AuthStore';
+import UserStore from '../store/UserStore';
 import {Link} from 'react-router';
 var Masonry = require('masonry-layout');
 
 import Actions from '../actions/Actions';
 var ActionTypes = require("../constants/ActionTypes");
+import _ from 'lodash';
 
 function getState() {
     return {
@@ -18,7 +20,11 @@ function getState() {
 export default class app extends React.Component {
     constructor(props){
         super(props);
-        this.state = getState();
+        this.state = _.merge(getState(), {
+            edit: false,
+            lastName: '',
+            firstName: ''
+        });
     }
     handleClick(e){
         e.preventDefault();
@@ -56,6 +62,13 @@ export default class app extends React.Component {
     _onChange() {
         this.setState(getState());
     }
+
+    componentWillReceiveProps(){
+        this.setState({
+            lastName:  this.state.user.data.last_name,
+            firstName: this.state.user.data.first_name
+        })
+    }
     
     render() {
         if(!this.state.user.data){
@@ -81,8 +94,41 @@ export default class app extends React.Component {
                             </div>
                         </div>
                         <h4 style={{marginTop: 20,  float: 'left', marginLeft: 10}}>
-                            {`${this.state.user.data.last_name} ${this.state.user.data.first_name}`}
-                            <a href="" style={{fontSize: 14, marginLeft: 10}}><span className="glyphicon glyphicon-pencil"></span></a>
+                            {this.state.edit ? <div>
+                                <input type="text" value={this.state.lastName} onChange={(e)=>{
+                                    this.setState({
+                                        lastName: e.target.value
+                                    })
+                                }}/>
+                                <input type="text" value={this.state.firstName } onChange={(e)=>{
+                                    this.setState({
+                                        firstName: e.target.value
+                                    })
+                                }}/>
+                                <a href="#" onClick={()=>{
+                                    Actions.send(ActionTypes.USER_EDIT, {
+                                        lastName: this.state.lastName,
+                                        firstName: this.state.firstName
+                                    });
+                                    this.setState({
+                                        edit: false
+                                    })
+                                }}>Save</a>
+                                <a href="#" onClick={()=>{
+                                    this.setState({
+                                        edit: false
+                                    })
+                                }}>Back</a>
+                            </div> : <div>
+                                {`${this.state.user.data.last_name} ${this.state.user.data.first_name}`}
+                                <a href="#"  style={{fontSize: 14, marginLeft: 10}} onClick={() => {
+                                    this.setState({
+                                        edit: true
+                                    })
+                                }}>
+                                    <span className="glyphicon glyphicon-pencil"></span>
+                                </a>
+                            </div>}
                         </h4>
                         <div style={{clear: 'both'}}></div>
                     </div>
