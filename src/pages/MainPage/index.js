@@ -174,7 +174,7 @@ export default class MainPage extends React.Component {
                         <p style={{color: '#666', float: 'right', fontStyle: 'italic'}  }>{this.state.event.address}</p>
                         <div style={{clear: 'both'}}></div>
                         <div>
-                                <a href="" className="btn btn-primary col-md-12 text-center" >I'm going!</a>
+                                <a href="" className="btn btn-primary col-md-12 text-center" >I'm going! onClick=</a>
                         </div>
                     </div>
                 </div>
