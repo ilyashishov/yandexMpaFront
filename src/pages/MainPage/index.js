@@ -27,8 +27,8 @@ export default class MainPage extends React.Component {
         var self = this;
         navigator.geolocation.getCurrentPosition(function(position) {
             self.setState({
-                latitude: 53.195947,//position.coords.latitude,
-                longitude: 45.010325//position.coords.longitude
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
             })
         });
         this.setState({
