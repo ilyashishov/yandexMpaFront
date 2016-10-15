@@ -103,7 +103,7 @@ export default class MainPage extends React.Component {
             id: 5,
 
         }
-        if(!this.state.eventsData){
+        if(!this.state.eventsData && !this.state.usersList){
             return null;
         }
         return <div style={{overflow: 'hidden', position: 'relative', width: '100%', height: this.state.rightBarHeight-1}}>
@@ -128,19 +128,26 @@ export default class MainPage extends React.Component {
                     }
                     {
                         this.state.usersList && this.state.usersList.map((i, index)=>{
-                            if(i.longitude > 0){
-                                console.log(i)
-                                return <Point
-                                    key={index}
-                                    openInfo={this.openInfo.bind(this,i)}
-                                    lat={i.latitude}
-                                    lon={i.longitude}
-                                    avatar={'./img/avatar.png'} />
+                            if(i.longitude > 0 ){
+                                if(i.token != localStorage.token){
+                                    return <Point
+                                        key={index}
+                                        openInfo={this.openInfo.bind(this,i)}
+                                        lat={i.latitude}
+                                        lon={i.longitude}
+                                        avatar={i.avatar ? i.avatar : './img/avatar3.jpg'} />
+                                }else{
+                                    return <MyPoint
+                                        key={index}
+                                        lat={this.state.latitude} 
+                                        lon={this.state.longitude} 
+                                        avatar={i.avatar ? i.avatar : './img/avatar3.jpg'} />
+                                }
+
                             }
 
                         })
                     }
-                    <MyPoint lat={this.state.latitude} lon={this.state.longitude} avatar={'./img/avatar3.jpg'} />
                 </Map>
             </div>
             {
@@ -150,10 +157,10 @@ export default class MainPage extends React.Component {
                         <div className="avatar" style={{width: 80, height: 80, float: 'left', margin: 10}}>
                             <img style={{width: 80, height: 80, borderRadius: '50%'}} src={this.state.data.avatar} alt=""/>
                         </div>
-                        <h4 style={{display: 'inline-block'}} className="name">{`${this.state.data.lastName} ${this.state.data.firstName}`}</h4>
+                        <h4 style={{display: 'inline-block'}} className="name">{`${this.state.data.last_name} ${this.state.data.first_name}`}</h4>
                         <div>
                             <h5 style={{display: 'inline-block'}} className="level">Level</h5>
-                            <div className="level-number">{this.state.data.level}</div>
+                            <div className="level-number">{this.state.data.id}</div>
                         </div>
                         <div style={{marginTop: 5}}>
                             <Link to={"/chat/" + this.state.data.id} style={{margin: 5, marginLeft: 0}}>Message</Link>
@@ -164,8 +171,9 @@ export default class MainPage extends React.Component {
                     <div className="photo-gallery grids">
                         <h3>Latest photos</h3>
                         <div style={{position: 'relative'}}>
+                            {console.log(this.state.data.photos)}
                             {
-                                this.state.data.photos.map((i, index) => {
+                                this.state.data.photos && this.state.data.photos.split(';').map((i, index) => {
                                     return <img key={index} onClick={()=>{
                                             this.setState({
                                                 showGallery: true,
@@ -181,7 +189,7 @@ export default class MainPage extends React.Component {
             }
             {
                 this.state.eventInfoShow &&
-                <div className='rightBar animated bounceInRight' style={{ width: this.state.windowWidth < 768 ? this.state.windowWidth  : 300, height: "100%", background: '#fff', position: 'absolute', top: 0, right: 0, zIndex: 100}}>
+                <div className='rightBar animated bounceInRight' style={{overflowY: 'scroll', width: this.state.windowWidth < 768 ? this.state.windowWidth  : 300, height: "100%", background: '#fff', position: 'absolute', top: 0, right: 0, zIndex: 100}}>
                     <div>
                         <img src={this.state.event.img} alt="" style={{width: '100%', heigth: 'auto'}}/>
                     </div>
