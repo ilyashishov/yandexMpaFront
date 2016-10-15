@@ -9,5 +9,7 @@ module.exports = keyMirror({
     GET_MESSAGES_TO_CHAT: null,
     SEND_MESSAGE: null,
     GET_EVENTS: null,
-    USER_EDIT: null
+    USER_EDIT: null,
+    USER_POSITION_UPDATE: null,
+    GET_USERS: null
 });

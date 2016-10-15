@@ -3,8 +3,12 @@ import {Link} from 'react-router'
 import { Map, Marker, MarkerLayout } from 'yandex-map-react';
 import {Point, MyPoint , EventPoint} from '../../components/Point';
 import AuthStore from '../../store/AuthStore';
+import UserStore from '../../store/UserStore';
+import Action from '../../actions/Actions';
+import ActionTypes from '../../constants/ActionTypes';
 
 var Masonry = require('masonry-layout');
+
 
 export default class MainPage extends React.Component {
     constructor(props) {
@@ -20,16 +24,19 @@ export default class MainPage extends React.Component {
             showGalleryWidth: 0,
             windowWidth: 0,
             eventsData: AuthStore.getEvents(),
-            eventInfoShow: false
+            eventInfoShow: false,
+            usersList: UserStore.getUsers()
         }
     }
     componentDidMount(){
         var self = this;
+        Action.send(ActionTypes.GET_USERS);
         navigator.geolocation.getCurrentPosition(function(position) {
             self.setState({
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude
             })
+            Action.send(ActionTypes.USER_POSITION_UPDATE, {latitude: position.coords.latitude, longitude: position.coords.longitude})
         });
         this.setState({
             rightBarHeight: $(window).height() - 60,
@@ -38,14 +45,17 @@ export default class MainPage extends React.Component {
             showGalleryWidth: $(window).width() - 300
         });
         AuthStore.addChangeListener(this._onChange.bind(this));
+        UserStore.addChangeListener(this._onChange.bind(this));
     }
     componentWillUnmount() {
         AuthStore.removeChangeListener(this._onChange.bind(this));
+        UserStore.removeChangeListener(this._onChange.bind(this));
     }
 
     _onChange() {
         this.setState({
-            eventsData: AuthStore.getEvents()
+            eventsData: AuthStore.getEvents(),
+            usersList: UserStore.getUsers()
         });
     }
 
@@ -116,8 +126,20 @@ export default class MainPage extends React.Component {
                                 avatar={i.img} />
                         })
                     }
-                    <Point openInfo={this.openInfo.bind(this,data1)} lat={this.state.latitude + 0.001} lon={this.state.longitude - 0.001} avatar={'./img/avatar.png'} />
-                    <Point openInfo={this.openInfo.bind(this, data2)} lat={this.state.latitude - 0.0005} lon={this.state.longitude + 0.0003} avatar={'./img/avatar2.png'} />
+                    {
+                        this.state.usersList && this.state.usersList.map((i, index)=>{
+                            if(i.longitude > 0){
+                                console.log(i)
+                                return <Point
+                                    key={index}
+                                    openInfo={this.openInfo.bind(this,i)}
+                                    lat={i.latitude}
+                                    lon={i.longitude}
+                                    avatar={'./img/avatar.png'} />
+                            }
+
+                        })
+                    }
                     <MyPoint lat={this.state.latitude} lon={this.state.longitude} avatar={'./img/avatar3.jpg'} />
                 </Map>
             </div>
